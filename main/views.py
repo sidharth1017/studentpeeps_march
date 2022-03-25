@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from account.tasks import send_brand_mail, send_contact_mail, send_course_mail, send_subscribe_email
 from django.template.loader import render_to_string
 
-from account.models import UnVerified
+from account.models import Payment, UnVerified
 from account.tasks import send_email
 
 from brands.models import BrandCode, BrandSearch
@@ -15,6 +15,10 @@ from brands.models import BrandCode, BrandSearch
 # Create your views here.
 class Home(View):
     def get(self, request):
+        if request.GET.get("free"):
+            payment = Payment.objects.filter(user=request.user)[0]
+            payment.payment_status = 1
+            payment.save()
         brandsearch = BrandSearch.objects.all()
         return render(request,'index.html', {'brandsearch': brandsearch})
         

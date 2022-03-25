@@ -620,13 +620,16 @@ Deals & Offers{% endblock %} {% block linkshead %}
 <section class="section-header">
   <div class="home-content">
     <div class="left-cont">
+      {% for message in messages %}
+      <div class="alert alert-{{message.tags}}">{{message}}</div>
+      {% endfor %}
       <span class="heading"> Get student discounts when you shop </span>
       <span class="sub-heading">
         Join thousands of students enjoying student discounts on 40+ brands
         including Indigo, Udemy, Microsoft, Spotify and Rapido
       </span>
       <div class="home-btns">
-        <a href="/account/register" class="community-link">
+        <a href="{% url 'Membership' %}" class="community-link">
           Get Membership<br />
         </a>
         <a href="{% url 'All' %}" class="scroll-down">
@@ -963,7 +966,6 @@ Deals & Offers{% endblock %} {% block linkshead %}
         </div>
       </a>
       <!-- Non  Exlusive card mobile start -->
-
     </div>
   </div>
 

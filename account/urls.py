@@ -33,11 +33,15 @@ urlpatterns = [
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"),
     name="password_reset_complete"),
 
-    #Data     
+    # Data     
     path('registers-data-1017/', views.Register, name='Register'),
     path('uploads-data-1017/', views.Uploads, name='Uploads'),
 
     # Extra
     path('signupview/', views.SignUpView, name='signupview'),
-    path('college/', college.CollegeView.as_view(), name='CollegeView')
+    path('college/', college.CollegeView.as_view(), name='CollegeView'),
+    
+    # Razorpay
+    path('membership/', views.Membership, name='Membership'),
+    path('razorpay_callback/', views.RazorpayCallback, name='RazorpayCallback'),
 ] 
