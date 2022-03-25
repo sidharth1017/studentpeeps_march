@@ -5,6 +5,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from .serializers import *
 import pandas as pd 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 import uuid 
 import razorpay
 from django.views.decorators.csrf import csrf_exempt
@@ -37,6 +38,7 @@ def SignUpView(request):
     return render(request, 'signupview.html', {'Institution': Institution})
 
 
+@login_required(login_url='/account/login')
 def Membership(request):
     payment = Payment.objects.filter(user=request.user)
     order_currency = "INR"
@@ -49,17 +51,17 @@ def Membership(request):
             messages.success(request, "You are already a member!")
             return HttpResponseRedirect("/")
         elif payment.payment_status == 2:
-            razorpay_order = razorpay_client.order.create({"amount": 100.00, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{payment.id}", "payment_capture": "0"})
+            razorpay_order = razorpay_client.order.create({"amount": 19900.00, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{payment.id}", "payment_capture": "0"})
             order_id = razorpay_order["id"]
             payment.razorpay_order_id = order_id
             payment.save()
-        callback_url = "http://" + str(get_current_site(request)) + "/account/razorpay_callback/"
+        callback_url = "https://" + str(get_current_site(request)) + "/account/razorpay_callback/"
         return render(request, 'membership.html', {"order_id": order_id, "razorpay_merchant_id": config("RAZORPAY_KEY_ID"), "callback_url": callback_url})
     
     new_payment = Payment(user=request.user, amount=199.00)
     new_payment.save()
-    callback_url = "http://" + str(get_current_site(request)) + "/account/razorpay_callback/"   
-    razorpay_order = razorpay_client.order.create({"amount": 100.00, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{new_payment.id}", "payment_capture": "0"})
+    callback_url = "https://" + str(get_current_site(request)) + "/account/razorpay_callback/"   
+    razorpay_order = razorpay_client.order.create({"amount": 19900.00, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{new_payment.id}", "payment_capture": "0"})
     new_payment.razorpay_order_id = razorpay_order["id"]
     new_payment.save()
         
@@ -67,6 +69,7 @@ def Membership(request):
 	
  
 @csrf_exempt
+@login_required(login_url='/account/login')
 def RazorpayCallback(request):
     if request.method == "POST":
         try:
