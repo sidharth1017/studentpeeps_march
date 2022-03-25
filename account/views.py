@@ -49,7 +49,7 @@ def Membership(request):
             messages.success(request, "You are already a member!")
             return HttpResponseRedirect("/")
         elif payment.payment_status == 2:
-            razorpay_order = razorpay_client.order.create({"amount": 199*100, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{payment.id}", "payment_capture": "0"})
+            razorpay_order = razorpay_client.order.create({"amount": 100.00, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{payment.id}", "payment_capture": "0"})
             order_id = razorpay_order["id"]
             payment.razorpay_order_id = order_id
             payment.save()
@@ -59,7 +59,7 @@ def Membership(request):
     new_payment = Payment(user=request.user, amount=199.00)
     new_payment.save()
     callback_url = "http://" + str(get_current_site(request)) + "/account/razorpay_callback/"   
-    razorpay_order = razorpay_client.order.create({"amount": 199*100, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{new_payment.id}", "payment_capture": "0"})
+    razorpay_order = razorpay_client.order.create({"amount": 100.00, "currency": order_currency, "notes": notes, "receipt": f"MEMBERSHIP_{new_payment.id}", "payment_capture": "0"})
     new_payment.razorpay_order_id = razorpay_order["id"]
     new_payment.save()
         

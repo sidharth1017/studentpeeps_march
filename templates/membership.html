@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}StudentPeeps | Login{% endblock %}
+{% block title %}StudentPeeps | Membership{% endblock %}
 
 {% block linkshead %}
 <meta name="description" content="Login to your Studentpeeps’ Account and enjoy student discounts when you shop.">
@@ -178,11 +178,19 @@
     pay_membership.addEventListener("click", (event) => {
         event.preventDefault();
         const membership_amount = document.getElementById("membership_amount");
-        if (membership_amount.innerHTML == "0") window.location.href = "/?free='true'";
-        else {
+        if (membership_amount.innerHTML == "0") {
+            fetch("/", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({"free": "true"})
+            }).then(res => {
+                console.log("Request Complete! Response:", res);
+                window.location.href = "/";
+            });
+        } else {
             const options = {
                 "key": "{{ razorpay_merchant_id }}",
-                "amount": "19900.00",
+                "amount": "100.00",
                 "currency": "INR",
                 "order_id": "{{ order_id }}",
                 "name": "Studentpeeps Membership",

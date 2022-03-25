@@ -1,26 +1,35 @@
+from django.http import JsonResponse
 from django.shortcuts import render, HttpResponseRedirect
 from django.views.generic.base import View
 from django.contrib import messages
 from .models import Contact, RequestBrand, Foundation, Resource, Brand, Subscribe
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from account.tasks import send_brand_mail, send_contact_mail, send_course_mail, send_subscribe_email
+from account.tasks import send_brand_mail, send_course_mail, send_subscribe_email
 from django.template.loader import render_to_string
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from account.models import Payment, UnVerified
 from account.tasks import send_email
-
 from brands.models import BrandCode, BrandSearch
+import json
 
 # Create your views here.
+@method_decorator(csrf_exempt, name="dispatch")
 class Home(View):
     def get(self, request):
-        if request.GET.get("free"):
-            payment = Payment.objects.filter(user=request.user)[0]
-            payment.payment_status = 1
-            payment.save()
         brandsearch = BrandSearch.objects.all()
         return render(request,'index.html', {'brandsearch': brandsearch})
+    
+    def post(self, request):
+        body = json.loads(request.body)
+        if body.get("free"):
+            payment = Payment.objects.filter(user=request.user)[0]
+            payment.payment_status = 1
+            payment.amount = 0.0
+            payment.save()
+            messages.success(request, "You are now member of Studentpeeps!!")
+        return JsonResponse({"message": "Done!"})
         
 class OurStory(View):
     def get(self, request):
